@@ -1,0 +1,24 @@
+{
+  "name": "contact-manager-api",
+  "version": "1.0.0",
+  "description": "Node Apis for contact management system",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mohananagavenkat/contact-management-apis.git"
+  },
+  "keywords": [
+    "contact management system",
+    "contact management",
+    "apis for contact management system"
+  ],
+  "author": "Mohana Naga Venkat <mohananagavenkat@gmail.com> (http://www.smnv.in/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mohananagavenkat/contact-management-apis/issues"
+  },
+  "homepage": "https://github.com/mohananagavenkat/contact-management-apis#readme"
+}
