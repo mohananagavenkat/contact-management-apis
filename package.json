@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/mohananagavenkat/contact-management-apis/issues"
   },
-  "homepage": "https://github.com/mohananagavenkat/contact-management-apis#readme"
+  "homepage": "https://github.com/mohananagavenkat/contact-management-apis#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
 }
