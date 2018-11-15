@@ -2,8 +2,22 @@ const express = require("express");
 
 const app = express();
 
-const port = process.env.PORT || 3000;
+const mongoose = require("mongoose");
 
+// connecting to mongodb
+mongoose
+  .connect(
+    "mongodb://localhost/contactmanager",
+    { useNewUrlParser: true }
+  )
+  .then( () => {
+    console.log("connected to mongodb");
+  })
+  .catch(
+    error => console.error(error)
+  )
+
+// setting access control headers to make CORS possible
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE");
@@ -11,57 +25,15 @@ app.use((req, res, next) => {
   next();
 });
 
+// importing router files
 const authRoutes = require("./routes/authRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 
+// passing routes to middleware
 app.use(authRoutes);
 app.use(contactRoutes);
 
-app.get("/", (req, res, next) => {
-  res.send("This is sample route");
-});
-
-app.get("/contacts", (req, res, next) => {
-  res.json([
-    {
-      firstName: "Mohana Naga Venkat",
-      lastName: "Sayempu",
-      phoneNumber: "9949270864",
-      email: "mohananagavenkat@gmail.com",
-      company: "Smactechlabs",
-      job: "web developer",
-      notes: "nothing",
-      avatar: "/assets/img/profilepic.jpg"
-    },
-    {
-      firstName: "Hemasri Sravya",
-      lastName: "Sayempu",
-      phoneNumber: "9631457822",
-      email: "sravya@gmail.com"
-    },
-    {
-      firstName: "Ratnamala",
-      lastName: "Nallapaneni",
-      phoneNumber: "9908439725",
-      email: "ratnamala.nallapaneni@gmail.com"
-    },
-    {
-      firstName: "Sivaram prasad",
-      lastName: "Sayempu",
-      phoneNumber: "9603531248",
-      email: "sivaramprasad553@gmail.com"
-    },
-    {
-      firstName: "Ammamma",
-      phoneNumber: "9177326204"
-    },
-    {
-      firstName: "Bava",
-      phoneNumber: "9989992566",
-      email: "bharathkumar.pamulapati@gmail.com"
-    }
-  ]);
-});
+const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
   console.log(`server started http://localhost:${port}`);
