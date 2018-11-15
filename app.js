@@ -4,18 +4,25 @@ const app = express();
 
 const mongoose = require("mongoose");
 
+const bodyParser = require("body-parser");
+
 // connecting to mongodb
 mongoose
   .connect(
     "mongodb://localhost/contactmanager",
     { useNewUrlParser: true }
   )
-  .then( () => {
+  .then(() => {
     console.log("connected to mongodb");
   })
   .catch(
     error => console.error(error)
-  )
+  );
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+// parse application/json
+app.use(bodyParser.json());
 
 // setting access control headers to make CORS possible
 app.use((req, res, next) => {
