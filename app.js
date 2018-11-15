@@ -15,9 +15,9 @@ mongoose
   .then(() => {
     console.log("connected to mongodb");
   })
-  .catch(
-    error => console.error(error)
-  );
+  .catch(error => console.error(error));
+
+mongoose.set("useCreateIndex", true); // to get rif of some deprication warning
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
