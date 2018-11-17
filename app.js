@@ -37,7 +37,7 @@ const authRoutes = require("./routes/authRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 
 // passing routes to middleware
-app.use(authRoutes);
+app.use("/user",authRoutes);
 app.use(contactRoutes);
 
 const port = process.env.PORT || 3000;
