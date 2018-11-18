@@ -71,8 +71,69 @@ router.post("/signup", (req, res, next) => {
 });
 
 router.post("/signin", (req, res, next) => {
-  res.send("this is signin route");
+  const {email,password} = req.body;
+  User
+    .findOne({email:email})
+    .then(user=>{
+      if(!user)
+        return sendError(res, 401, "your email doesn't exist in our recors. please signup.");
+      if(user.active === 0)
+        return sendError(res, 401, "your account is not activated yet");
+      bcrypt
+        .compare(password, user.password)
+        .then((matched) => {
+          if (!matched)
+            return sendError(res,401,"your password is wrong");
+          return res.send("you can login");
+        })
+        .catch(error => {
+          console.log(error);
+          return sendError(res, 401, error);
+        })
+    })
+    .catch(error=>{
+      console.log(error);
+      return sendError(res, 401, error);
+    })
 });
 
+router.get("/activate/:token",(req,res,next)=>{
+  const token = req.params.token;
+  UserActivationToken
+    .findOne({token})
+    .then( tokenRecord => {
+      if(!tokenRecord)
+        return sendError(res,401,"something went wrong. please try again after some time");
+      User
+        .findByIdAndUpdate(
+          tokenRecord._userId,
+          {
+            active:1
+          }
+        )
+        .then(()=>{
+          UserActivationToken
+            .findByIdAndDelete(tokenRecord.id)
+            .then(()=>{
+              return res.json({
+                status: true,
+                message: "account activated successfully"
+              });
+            })
+            .catch(error => {
+              console.log(error);
+              return sendError(res, 401, error);
+            })
+        })
+        .catch(error => {
+          console.log(error);
+          return sendError(res, 401, error);
+        })
+    })
+    .catch(error => {
+      console.log(error);
+      return sendError(res, 401, error);
+    })
+});
 
 module.exports = router;
