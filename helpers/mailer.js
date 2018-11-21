@@ -20,12 +20,14 @@ const userActivationEmail = (userEmail,token) => {
     };
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-            return console.log(error);
+            console.log(error);
+            return false;
         }
         console.log(
             "Message sent successfully 👍. MessageId : %s",
             info.messageId
         );
+        return true;
     });
 }
 
