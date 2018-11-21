@@ -23,16 +23,16 @@ router.post("/signup", (req, res, next) => {
   console.log(req.body);
   const { firstName, lastName, email, password, confirmPassword } = req.body;
   if (password !== confirmPassword) {
-    return sendError(res, 401, "password and confirmpassword should be same");
+    return sendError(res, 200, "password and confirmpassword should be same");
   }
   User.findOne({ email }) // checking whether email already existed or not
     .then(user => {
       if (user) {
-        return sendError(res, 401, "The email address already exists");
+        return sendError(res, 200, "The email address already exists");
       }
       bcrypt.hash(password, saltRounds, function(error, hash) {
         if (error) {
-          return sendError(res, 401, "Some Error Occured. Please Try Again After Sometime");
+          return sendError(res, 200, "Some Error Occured. Please Try Again After Sometime");
         }
         const newUser = new User({
           firstName,
@@ -50,23 +50,24 @@ router.post("/signup", (req, res, next) => {
             });
             newUserActivationToken
               .save()
-              .then(()=>{
-                mailer.send.userActivationEmail(user.email,token);
+              .then((tokenRecord)=>{
+                mailer.send.userActivationEmail(user.email, token);
                 return res.json({
                   status: true,
-                  message: "User created successfully"
+                  message: "User created successfully",
+                  tokenId: tokenRecord.id
                 });
               })
           })
           .catch(error => {
             console.log(error);
-            return sendError(res, 401, error);
+            return sendError(res, 200, error);
           });
       });
     })
     .catch(error => {
       console.log(error);
-      return sendError(res, 401, error);
+      return sendError(res, 200, error);
     });
 });
 
@@ -76,24 +77,36 @@ router.post("/signin", (req, res, next) => {
     .findOne({email:email})
     .then(user=>{
       if(!user)
-        return sendError(res, 401, "your email doesn't exist in our recors. please signup.");
-      if(user.active === 0)
-        return sendError(res, 401, "your account is not activated yet");
-      bcrypt
-        .compare(password, user.password)
-        .then((matched) => {
-          if (!matched)
-            return sendError(res,401,"your password is wrong");
-          return res.send("you can login");
-        })
-        .catch(error => {
-          console.log(error);
-          return sendError(res, 401, error);
-        })
+        return sendError(res, 200, "your email doesn't exist in our recors. please signup.");
+      if(user.active === 0){
+        UserActivationToken
+          .findOne({_userId:user.id})
+          .then(
+            (tokenRecord)=>{
+              return sendError(res, 200, "your account is not activated yet",{tokenId:tokenRecord.id});
+            }
+          )
+          .catch(error => {
+            console.log(error);
+            return sendError(res, 200, error);
+          })
+      }else{
+        bcrypt
+          .compare(password, user.password)
+          .then((matched) => {
+            if (!matched)
+              return sendError(res, 200, "your password is wrong");
+            return res.send("you can login");
+          })
+          .catch(error => {
+            console.log(error);
+            return sendError(res, 200, error);
+          })
+      }
     })
     .catch(error=>{
       console.log(error);
-      return sendError(res, 401, error);
+      return sendError(res, 200, error);
     })
 });
 
@@ -103,7 +116,7 @@ router.get("/activate/:token",(req,res,next)=>{
     .findOne({token})
     .then( tokenRecord => {
       if(!tokenRecord)
-        return sendError(res,401,"something went wrong. please try again after some time");
+        return sendError(res,200,"something went wrong. please try again after some time");
       User
         .findByIdAndUpdate(
           tokenRecord._userId,
@@ -122,18 +135,43 @@ router.get("/activate/:token",(req,res,next)=>{
             })
             .catch(error => {
               console.log(error);
-              return sendError(res, 401, error);
+              return sendError(res, 200, error);
             })
         })
         .catch(error => {
           console.log(error);
-          return sendError(res, 401, error);
+          return sendError(res, 200, error);
         })
     })
     .catch(error => {
       console.log(error);
-      return sendError(res, 401, error);
+      return sendError(res, 200, error);
     })
 });
+
+router.get("/resend/activationtoken/:tokenId",(req,res,next)=>{
+  const tokenId = req.params.tokenId;
+  UserActivationToken
+    .findById(tokenId)
+    .then(
+      (tokenRecord)=>{
+        const {token,_userId} = tokenRecord;
+        console.log(token,_userId);
+        User
+          .findById(_userId)
+          .then(
+            (userRecord)=>{
+              const email = userRecord.email;
+              mailer.send.userActivationEmail(email, token);
+              return res.json({
+                status:true,
+                message:"We have resent activation email. Please check in your spam folder also."
+              })
+            }
+          )
+        return;
+      }
+    )
+})
 
 module.exports = router;
