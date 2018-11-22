@@ -1,12 +1,12 @@
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
-    host: 'smtp.sendgrid.net',
-    port: 587,
+    host: 'smtp.mailtrap.io',
+    port: 2525,
     secure: false, // true for 465, false for other ports
     auth: {
-        user: "AchyuthAchyuth",
-        pass: "achyuth111"
+        user: "6ad39a1fb16129",
+        pass: "c55269bec474ff"
     }
 });
 
