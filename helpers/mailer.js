@@ -1,12 +1,13 @@
 const nodemailer = require("nodemailer");
+const config = require("../config/config");
 
 const transporter = nodemailer.createTransport({
-    host: 'smtp.mailtrap.io',
+    host: config.mailServer.host,
     port: 2525,
     secure: false, // true for 465, false for other ports
     auth: {
-        user: "6ad39a1fb16129",
-        pass: "c55269bec474ff"
+        user: config.mailServer.userName,
+        pass: config.mailServer.password
     }
 });
 
@@ -16,7 +17,7 @@ const userActivationEmail = (userEmail,token) => {
         to: userEmail, // list of receivers
         subject: "Contact Manager - Thankyou For Creating Account. Please Activate Your Account ✔", // Subject line
         html: `<h3>Welcome To Contact Manager 👻</h3>
-                    <p>please click on the link to activate your account <a href="http://localhost:3001/activate_user/${token}">Click Here</a></p>`
+                    <p>please click on the link to activate your account <a href="${config.frontEndURL}/user/activate/${token}">Click Here</a></p>`
     };
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
