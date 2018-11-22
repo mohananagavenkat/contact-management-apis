@@ -116,7 +116,7 @@ router.get("/activate/:token",(req,res,next)=>{
     .findOne({token})
     .then( tokenRecord => {
       if(!tokenRecord)
-        return sendError(res,200,"something went wrong. please try again after some time");
+        return sendError(res,200,"something went wrong.May be your account is already activated or else please try again after some time. For further assistance contact our support team");
       User
         .findByIdAndUpdate(
           tokenRecord._userId,
