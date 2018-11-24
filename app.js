@@ -34,10 +34,12 @@ app.use((req, res, next) => {
 
 // importing router files
 const authRoutes = require("./routes/authRoutes");
+const passwordRoutes = require("./routes/passwordChangeRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 
 // passing routes to middleware
 app.use("/user",authRoutes);
+app.use("/user", passwordRoutes);
 app.use(contactRoutes);
 
 const port = process.env.PORT || 3000;
