@@ -155,6 +155,8 @@ router.get("/resend/activationtoken/:tokenId",(req,res,next)=>{
     .findById(tokenId)
     .then(
       (tokenRecord)=>{
+        if (!tokenRecord)
+          return sendError(res, 200, "something went wrong.May be your account is already activated or else please try again after some time. For further assistance contact our support team");
         const {token,_userId} = tokenRecord;
         console.log(token,_userId);
         User
