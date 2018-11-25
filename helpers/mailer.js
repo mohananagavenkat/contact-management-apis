@@ -38,7 +38,7 @@ const forgotPasswordEmail = (userEmail,token) => {
         to: userEmail, // list of receivers
         subject: "Forgot Password - Click on the link to reset your password 👍 ", // Subject line
         html: `<h3>We have received forgot password request for your email 🤔 </h3>
-                    <p>please click on the link to change your password <a href="${config.frontEndURL}/user/resetpassword/${token}">Click Here</a></p>`
+                    <p>please click on the link to change your password <a href="${config.frontEndURL}/reset-password/${token}">Click Here</a></p>`
     };
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
