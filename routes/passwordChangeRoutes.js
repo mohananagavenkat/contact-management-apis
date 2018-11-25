@@ -13,6 +13,11 @@ const sendError = require("../helpers/sendErrorResponse");
 // requiring builtin crypto module to generate random token for user activation
 const crypto = require("crypto");
 
+//module to hash passwords
+const bcrypt = require("bcryptjs");
+//number of rounds to generate a salt
+const saltRounds = 10;
+
 const mailer = require("../helpers/mailer");
 
 router.post("/forgotpassword", (req, res, next) => {
@@ -58,13 +63,18 @@ router.post("/forgotpassword", (req, res, next) => {
         })
 });
 
-router.get("/resetpassword/:token", (req, res, next) => {
-    const token = req.params.token;
+router.post("/forgotpassword/validatetoken", (req, res, next) => {
+    const token = req.body.token;
     forgotPasswordToken
-        .findOneAndDelete({ token })
+        .findOne({ token })
         .then(tokenRecord => {
             if (!tokenRecord){
-                return sendError(res, 200, "something went wrong.May be your account is already activated or else please try again after some time. For further assistance contact our support team");
+                return sendError(res, 200, "something went wrong.Your token is invalid or you already changed your password using this token. For further assistance contact our support team");
+            }
+            // console.log(  );
+            // return;
+            else if ( ( (new Date()).getTime() - (tokenRecord.createdAt).getTime() ) / 1000 > 3600 ){
+                return sendError(res, 200, "Token was expired",{tokenExpired:true});
             }
             return res.json({
                 status:true,
@@ -104,5 +114,40 @@ router.get("/resend/forgotpasswordtoken/:tokenId", (req, res, next) => {
             }
         )
 })
+
+router.post("/resetpassword",(req,res,next)=>{
+    const { password, confirmPassword , id } = req.body;
+    if (password !== confirmPassword) {
+        return sendError(res, 200, "password and confirmpassword should be same");
+    }
+    User
+        .findById(id)
+        .then(userRecord => {
+            if(!userRecord){
+                return sendError(res, 200, "Something went wrong");
+            }
+            bcrypt.hash(password, saltRounds, function (error, hash) {
+                if (error) {
+                    return sendError(res, 200, "Some Error Occured. Please Try Again After Sometime");
+                }
+                userRecord.password = hash;
+                userRecord
+                    .save()
+                    .then(()=>{
+                        return res.json({
+                            status:true,
+                            message:"password changed successfully"
+                        })
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        return sendError(res, 200, error);
+                    })
+            })
+        }).catch(error => {
+            console.log(error);
+            return sendError(res, 200, error);
+        })
+});
 
 module.exports = router;
