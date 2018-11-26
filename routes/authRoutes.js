@@ -19,6 +19,10 @@ const crypto = require("crypto");
 
 const mailer = require("../helpers/mailer");
 
+const jwt = require("jsonwebtoken");
+
+const config = require("../config/config");
+
 router.post("/signup", (req, res, next) => {
   console.log(req.body);
   const { firstName, lastName, email, password, confirmPassword } = req.body;
@@ -96,7 +100,21 @@ router.post("/signin", (req, res, next) => {
           .then((matched) => {
             if (!matched)
               return sendError(res, 200, "your password is wrong");
-            return res.send("you can login");
+            jwt.sign({
+                data: 'foobar'
+              },
+              config.jwtSecret,
+              { expiresIn: '1h' },
+              function(error,token){
+                if(error)
+                  return sendError(res, 200, "something went wrong");
+                return res.json({
+                  status:true,
+                  message:"signin successfull",
+                  token:token
+                })
+              }
+            );
           })
           .catch(error => {
             console.log(error);
