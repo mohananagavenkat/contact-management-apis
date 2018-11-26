@@ -4,7 +4,8 @@ const config  = {
         userName:"6ad39a1fb16129",
         password:"c55269bec474ff"
     },
-    frontEndURL:"http://localhost:3001"
+    frontEndURL:"http://localhost:3001",
+    jwtSecret:"thisisacontactmanagemetapplication"
 }
 
 module.exports = config;
