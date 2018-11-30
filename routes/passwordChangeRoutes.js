@@ -103,7 +103,7 @@ router.get("/resend/forgotpasswordtoken/:tokenId", (req, res, next) => {
                     .then(
                         (userRecord) => {
                             const email = userRecord.email;
-                            mailer.send.userActivationEmail(email, token);
+                            mailer.send.forgotPasswordEmail(email, token);
                             return res.json({
                                 status: true,
                                 message: "We have resent email with password reset link. Please check in your spam folder also."
