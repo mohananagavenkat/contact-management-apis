@@ -66,7 +66,7 @@ router.post("/forgotpassword", (req, res, next) => {
 router.post("/forgotpassword/validatetoken", (req, res, next) => {
     const token = req.body.token;
     forgotPasswordToken
-        .findOne({ token })
+        .findOneAndDelete({ token })
         .then(tokenRecord => {
             if (!tokenRecord){
                 return sendError(res, 200, "something went wrong.Your token is invalid or you already changed your password using this token. For further assistance contact our support team");
