@@ -101,7 +101,10 @@ router.post("/signin", (req, res, next) => {
             if (!matched)
               return sendError(res, 200, "your password is wrong");
             jwt.sign({
-                data: 'foobar'
+                id:user.id,
+                firstName:user.firstName,
+                lastName:user.lastName,
+                email:user.email
               },
               config.jwtSecret,
               { expiresIn: '1h' },
@@ -111,7 +114,13 @@ router.post("/signin", (req, res, next) => {
                 return res.json({
                   status:true,
                   message:"signin successfull",
-                  token:token
+                  user:{
+                    firstName:user.firstName,
+                    lastName:user.lastName,
+                    email:user.email,
+                    avatar:user.avatar ? user.avatar : "",
+                    token:token
+                  }
                 })
               }
             );
