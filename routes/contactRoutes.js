@@ -2,6 +2,8 @@ const express = require("express");
 
 const router = express.Router();
 
+const verifyAuth = require("../middleware/verifyAuth");
+
 router.get("/contacts", (req, res, next) => {
   res.json([
     {
@@ -44,7 +46,9 @@ router.get("/contacts", (req, res, next) => {
   ]);
 });
 
-router.post("/contacts", (req, res, next) => {
+router.post("/contacts", verifyAuth, (req, res, next) => {
+  console.log("contacts post request");
+  console.log(req.user);
   res.send("this is post route for contacts");
 });
 

@@ -5,7 +5,7 @@ const router = express.Router();
 // requiring user Model to store user data
 const User = require("../models/userModel");
 // requiring UserActivationToken Model to store activation token of user in database
-const UserActivationToken = require("../models/userActivationTokenModule");
+const UserActivationToken = require("../models/userActivationTokenModel");
 
 // helper to send error response to client
 const sendError = require("../helpers/sendErrorResponse");
