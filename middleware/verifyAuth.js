@@ -8,7 +8,7 @@ const config = require("../config/config");
 //exporting the actual function
 module.exports = (req,res,next) =>{
     function sendAuthError(message){
-        return res.status(401).json({
+        return res.status(200).json({
             status: false,
             auth: false,
             message: message
@@ -25,7 +25,7 @@ module.exports = (req,res,next) =>{
     jwt.verify(token, config.jwtSecret, function (err, decoded) {
         if(err)
             return sendAuthError(err.message);
-        // decoded undefined
+        req.user = decoded;
         next();
     });
 }
