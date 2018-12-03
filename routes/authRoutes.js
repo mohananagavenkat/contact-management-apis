@@ -104,10 +104,11 @@ router.post("/signin", (req, res, next) => {
                 id:user.id,
                 firstName:user.firstName,
                 lastName:user.lastName,
-                email:user.email
+                email:user.email,
+                random:crypto.randomBytes(20).toString("hex")
               },
               config.jwtSecret,
-              { expiresIn: '1h' },
+              {  },
               function(error,token){
                 if(error)
                   return sendError(res, 200, "something went wrong");
